@@ -1,8 +1,8 @@
 {
   "name": "auth-service",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Auth service for Nexon Event Management Platform",
-  "author": "",
+  "author": "Park Yuhyeon <kevin95392004@gmail.com>",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
