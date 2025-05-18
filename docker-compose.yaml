@@ -27,7 +27,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
       REFRESH_TOKEN_EXPIRATION: ${REFRESH_TOKEN_EXPIRATION}
-      LOG_LEVEL: debug
+      LOG_LEVEL: ${LOG_LEVEL}
     networks:
       - nexon-msa-network
 
@@ -43,7 +43,7 @@ services:
       API_GW_SERVER_PORT: ${API_GW_SERVER_PORT}
       JWT_SECRET: ${JWT_SECRET}
       AUTH_SERVICE_URL: http://auth-service:${AUTH_SERVER_PORT}
-      LOG_LEVEL: debug
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - '${PUBLIC_PORT}:${API_GW_SERVER_PORT}'
     networks:
