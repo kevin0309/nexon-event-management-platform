@@ -4,7 +4,7 @@ export class RegisterResponseDto {
   @ApiProperty({ example: 1 })
   id: number;
 
-  @ApiProperty({ example: '2024-02-20T12:00:00.000Z' })
+  @ApiProperty({ example: '2025-05-20T12:00:00.000Z' })
   createdAt: string;
 }
 

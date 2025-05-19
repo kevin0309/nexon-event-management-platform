@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
-import { RegisterDto, LoginDto, RefreshTokenDto, TestTokenDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, RefreshTokenDto, TestTokenDto } from './dto/auth-request.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()

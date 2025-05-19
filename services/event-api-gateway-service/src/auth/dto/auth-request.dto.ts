@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmail, MinLength, IsNotEmpty, IsEnum } from 'class-validator';
 
+// 사용자 권한 레벨을 정의하는 enum
 export enum UserRole {
   USER = 'USER',
   OPERATOR = 'OPERATOR',
@@ -8,6 +9,7 @@ export enum UserRole {
   ADMIN = 'ADMIN',
 }
 
+// 회원가입 요청 DTO
 export class RegisterDto {
   @ApiProperty({
     description: 'User ID',
@@ -35,6 +37,7 @@ export class RegisterDto {
   role: UserRole;
 }
 
+// 로그인 요청 DTO
 export class LoginDto {
   @ApiProperty({
     description: 'User ID',
@@ -53,6 +56,7 @@ export class LoginDto {
   password: string;
 }
 
+// 토큰 갱신 요청 DTO
 export class RefreshTokenDto {
   @ApiProperty({
     description: 'User ID for refresh token',
@@ -71,6 +75,7 @@ export class RefreshTokenDto {
   refreshToken: string;
 }
 
+// 테스트용 토큰 검증 DTO
 export class TestTokenDto {
   @ApiProperty({ description: 'JWT 토큰' })
   @IsString()

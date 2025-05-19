@@ -1,7 +1,7 @@
 {
   "name": "event-api-gateway-service",
   "version": "0.0.1",
-  "description": "API Gateway for Event Management Platform",
+  "description": "API Gateway for Nexon Event Management Platform",
   "author": "Park Yuhyeon <kevin95392004@gmail.com>",
   "private": true,
   "license": "UNLICENSED",
