@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mongodb:
       image: mongo:6.0
@@ -17,17 +19,37 @@ services:
     build:
       context: services/auth-service
       dockerfile: Dockerfile
-    container_name: auth-service
+    command: >
+      sh -c "npm run start:prod & sleep 10 && npm run seed && wait"
+    container_name: nexon-msa-auth-service
     depends_on:
       - mongodb
     environment:
       NODE_ENV: ${NODE_ENV}
+      LOG_LEVEL: ${LOG_LEVEL}
       AUTH_SERVER_PORT: ${AUTH_SERVER_PORT}
       MONGODB_URI: mongodb://${MONGODB_USER_NAME}:${MONGODB_USER_PASSWORD}@mongodb:${MONGODB_PORT}/${MONGODB_DB_NAME}?authSource=admin
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
       REFRESH_TOKEN_EXPIRATION: ${REFRESH_TOKEN_EXPIRATION}
+    networks:
+      - nexon-msa-network
+
+  event-service:
+    build:
+      context: services/event-service
+      dockerfile: Dockerfile
+    container_name: nexon-msa-event-service
+    depends_on:
+      - mongodb
+      - mock-game-management-platform
+    environment:
+      NODE_ENV: ${NODE_ENV}
       LOG_LEVEL: ${LOG_LEVEL}
+      EVENT_SERVER_PORT: ${EVENT_SERVER_PORT}
+      MONGODB_URI: mongodb://${MONGODB_USER_NAME}:${MONGODB_USER_PASSWORD}@mongodb:${MONGODB_PORT}/${MONGODB_DB_NAME}?authSource=admin
+      EVENT_VALIDATION_URL: http://mock-game-management-platform:${MOCK_SERVER_PORT}/validate-event-condition/success
+      EVENT_REWARD_URL: http://mock-game-management-platform:${MOCK_SERVER_PORT}/provide-event-reward/success
     networks:
       - nexon-msa-network
 
@@ -35,17 +57,31 @@ services:
     build:
       context: services/event-api-gateway-service
       dockerfile: Dockerfile
-    container_name: event-api-gateway-service
+    container_name: nexon-msa-event-api-gateway-service
     depends_on:
       - auth-service
+      - event-service
     environment:
       NODE_ENV: ${NODE_ENV}
+      LOG_LEVEL: ${LOG_LEVEL}
       API_GW_SERVER_PORT: ${API_GW_SERVER_PORT}
       JWT_SECRET: ${JWT_SECRET}
       AUTH_SERVICE_URL: http://auth-service:${AUTH_SERVER_PORT}
-      LOG_LEVEL: ${LOG_LEVEL}
+      EVENT_SERVICE_URL: http://event-service:${EVENT_SERVER_PORT}
     ports:
       - '${PUBLIC_PORT}:${API_GW_SERVER_PORT}'
+    networks:
+      - nexon-msa-network
+
+  mock-game-management-platform:
+    build:
+      context: services/mock-game-management-platform
+      dockerfile: Dockerfile
+    container_name: nexon-msa-mock-game-management-platform
+    environment:
+      MOCK_SERVER_PORT: ${MOCK_SERVER_PORT}
+    ports:
+      - '${MOCK_SERVER_PORT}:${MOCK_SERVER_PORT}'
     networks:
       - nexon-msa-network
 
