@@ -6,6 +6,10 @@ import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
 
+/**
+ * 사용자 등록, 로그인, 토큰 관리를 담당하는 인증 서비스
+ * JWT 기반 인증과 리프레시 토큰을 지원
+ */
 @Injectable()
 export class AuthService {
   constructor(
@@ -14,6 +18,10 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
+  /**
+   * 새로운 사용자 등록 (비밀번호 해시화)
+   * @throws UnauthorizedException 이미 존재하는 사용자인 경우
+   */
   async register(id: string, password: string, role: UserRole): Promise<User> {
     const existingUser = await this.userModel.findOne({ id }).exec();
     if (existingUser) {
@@ -30,6 +38,10 @@ export class AuthService {
     return user.save();
   }
 
+  /**
+   * 로그인 시 사용자 인증 정보 검증
+   * @throws UnauthorizedException 인증 정보가 유효하지 않은 경우
+   */
   async validateUser(id: string, password: string): Promise<User> {
     const user = await this.userModel.findOne({ id }).exec();
     if (!user) {
@@ -44,6 +56,11 @@ export class AuthService {
     return user;
   }
 
+  /**
+   * 사용자 인증 및 JWT 토큰 발급
+   * 액세스 토큰과 리프레시 토큰 생성
+   * 리프레시 토큰은 해시화하여 데이터베이스에 저장
+   */
   async login(user: User) {
     const payload = { sub: user.id, role: user.role };
     const accessToken = this.jwtService.sign(payload);
@@ -65,6 +82,11 @@ export class AuthService {
     };
   }
 
+  /**
+   * 리프레시 토큰을 사용하여 액세스 토큰 갱신
+   * 리프레시 토큰 유효성 검증 후 새로운 액세스 토큰 발급
+   * @throws UnauthorizedException 리프레시 토큰이 유효하지 않은 경우
+   */
   async refreshToken(userId: string, refreshToken: string) {
     const user = await this.userModel.findOne({ id: userId }).exec();
     if (!user || !user.refreshToken) {

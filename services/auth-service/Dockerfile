@@ -40,4 +40,4 @@ ENV REFRESH_TOKEN_EXPIRATION=""
 EXPOSE $AUTH_SERVER_PORT
 
 # Start application
-CMD ["node", "dist/main"] 
+CMD ["npm", "run", "start:prod"] 
