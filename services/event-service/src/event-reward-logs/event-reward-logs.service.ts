@@ -63,6 +63,22 @@ export class EventRewardLogsService {
         throw error;
       });
 
+      // 중복 보상 수령 방지를 위한 이전 보상 이력 확인
+      const existingReward = await this.eventRewardLogModel.findOne({
+        userId,
+        eventId,
+        processResult: ProcessResult.ACCEPTED
+      });
+
+      if (existingReward) {
+        return this.eventRewardLogModel.create({
+          userId,
+          eventId,
+          processResult: ProcessResult.REJECTED,
+          rejectedReason: 'User has already received reward for this event',
+        });
+      }
+
       const now = new Date();
       const isEventValid = event.isEnabled && 
         event.startDate <= now && 
